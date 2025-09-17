@@ -4,6 +4,7 @@ require("dotenv").config();
 
 // Routes
 const sessionRoutes = require("./routes/session");
+const messageRoutes = require("./routes/message")
 
 // Config
 const prisma = require("./config/db");
@@ -25,6 +26,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use("/api/session", sessionRoutes);
+app.use("/api/message", messageRoutes)
 
 app.get("/", (req, res) => {
   res.send("🚀 RAG Chatbot Backend is running");
