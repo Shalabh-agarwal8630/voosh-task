@@ -2,10 +2,14 @@ const { createClient } = require("redis");
 
 const client = createClient({
   url: process.env.REDIS_URL,
+  socket: {
+    tls: true,   // Upstash requires TLS
+    rejectUnauthorized: false, // prevent SSL issues locally
+  },
 });
 
 client.on("connect", () => {
-  console.log(" Redis connected!!");
+  console.log("✅ Redis connected");
 });
 
 client.on("error", (err) => {

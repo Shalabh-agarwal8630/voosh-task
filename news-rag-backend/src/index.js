@@ -1,9 +1,9 @@
-// Load environment variables
-const dotenv = require("dotenv");
-dotenv.config();
-
-// Core dependencies
 const express = require("express");
+const cors = require("cors");
+require("dotenv").config();
+
+// Routes
+const sessionRoutes = require("./routes/session");
 
 // Config
 const prisma = require("./config/db");
@@ -14,11 +14,20 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
+app.use(
+  cors({
+    origin: true,        // allow all origins (adjust for prod)
+    credentials: true,   // allow cookies/credentials
+  })
+);
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Routes
+app.use("/api/session", sessionRoutes);
+
 app.get("/", (req, res) => {
-  res.send("RAG Chatbot Backend is running");
+  res.send("🚀 RAG Chatbot Backend is running");
 });
 
 app.get("/health", (req, res) => {
@@ -28,19 +37,15 @@ app.get("/health", (req, res) => {
 // Start server
 async function startServer() {
   try {
-    // Connect to Redis
-    await connectRedis();
-
-    // Connect to Postgres
-    await prisma.$connect();
+    await connectRedis(); // Connect to Redis
+    await prisma.$connect(); // Connect to Postgres
     console.log("✅ Postgres connected");
 
-    // Start Express server
     app.listen(PORT, () => {
-      console.log(`Server running at http://localhost:${PORT}`);
+      console.log(`✅ Server running at http://localhost:${PORT}`);
     });
   } catch (err) {
-    console.error("Failed to start server:", err);
+    console.error("❌ Failed to start server:", err);
     process.exit(1);
   }
 }
